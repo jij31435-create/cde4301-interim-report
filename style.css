@@ -1,0 +1,30 @@
+:root{--fg:#1d2228;--muted:#5b6672;--accent:#0b6e75;--bg:#fff;--line:#e3e7eb;--side:#f6f8f9}
+*{box-sizing:border-box}
+body{margin:0;font-family:Georgia,"Times New Roman",serif;color:var(--fg);background:var(--bg);line-height:1.65;font-size:17px}
+#toc{position:fixed;top:0;left:0;bottom:0;width:290px;overflow-y:auto;background:var(--side);border-right:1px solid var(--line);padding:24px 18px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:13.5px}
+#toc .tochead{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--muted);margin-bottom:10px}
+#toc ul{list-style:none;margin:0;padding:0}
+#toc li{margin:3px 0}#toc li.l2{padding-left:14px;font-size:12.5px}
+#toc a{color:var(--fg);text-decoration:none}#toc a:hover{color:var(--accent)}
+main{margin-left:290px;max-width:900px;padding:40px 48px 80px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:10px}
+.kicker{font-family:system-ui,sans-serif;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin:0}
+.title{font-size:2.2em;line-height:1.2;margin:.3em 0 .4em}
+.meta{color:var(--muted);margin:.3em 0}
+.btn{display:inline-block;margin-top:10px;padding:8px 16px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-family:system-ui,sans-serif;font-size:14px}
+article h1{font-size:1.6em;margin-top:2em;padding-top:.6em;border-top:1px solid var(--line)}
+article h2{font-size:1.25em;margin-top:1.6em}article h3{font-size:1.08em}
+h1,h2,h3{scroll-margin-top:16px}
+article p{text-align:justify}
+img{max-width:100%;height:auto;display:block;margin:18px auto}
+figure{margin:20px 0}figcaption,p:has(> em:only-child){text-align:center;color:var(--muted);font-size:.9em}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:.88em;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:6px 9px;vertical-align:top;text-align:left}
+th{background:var(--side)}
+a{color:var(--accent)}
+footer{margin-top:60px;color:var(--muted);font-size:13px;font-family:system-ui,sans-serif}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+@media(max-width:900px){#toc{position:static;width:auto;border-right:0;border-bottom:1px solid var(--line);max-height:none}main{margin-left:0;padding:24px 16px 60px}.title{font-size:1.6em}body{font-size:16px}}
+p.cap{text-align:center;color:var(--muted);font-size:.9em;font-style:italic;margin-top:-6px}
+article>h1:first-child{border-top:0;margin-top:1em}
+article img{max-height:560px;width:auto}

@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flow Analysis for Injection Manufacturing of PVA Hydrogel Suckers | Qi Ji</title>
+<meta name="description" content="CDE4301 Innovation and Design Capstone Interim Report - Qi Ji (A0276904W)">
+<link rel="stylesheet" href="style.css">
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']]}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"></script>
+</head><body>
+<nav id="toc"><div class="tochead">Contents</div><ul><li class="l1"><a href="#abstract">Abstract</a></li>
+<li class="l1"><a href="#introduction-soft-robots-and-the-casting-problem">1. Introduction: soft robots and the casting problem</a></li>
+<li class="l1"><a href="#process-research-question-and-hypothesis">2. Process, research question and hypothesis</a></li>
+<li class="l2"><a href="#why-closed-injection-casting">2.1. Why closed injection casting</a></li>
+<li class="l2"><a href="#filling-the-sucker-mold-why-viscosity-decides">2.2. Filling the sucker mold: why viscosity decides</a></li>
+<li class="l2"><a href="#shear-and-thermal-thinning">2.3. Shear and thermal thinning</a></li>
+<li class="l2"><a href="#research-question-hypothesis-and-objectives">2.4. Research question, hypothesis and objectives</a></li>
+<li class="l1"><a href="#materials-mold-and-completed-work">3. Materials, mold and completed work</a></li>
+<li class="l2"><a href="#adopted-formulation">3.1. Adopted formulation</a></li>
+<li class="l2"><a href="#from-mold-design-to-fabricated-samples">3.2. From mold design to fabricated samples</a></li>
+<li class="l2"><a href="#completed-work-and-technical-challenges">3.3. Completed work and technical challenges</a></li>
+<li class="l1"><a href="#simulation-design">4. Simulation design</a></li>
+<li class="l2"><a href="#isolating-shear-thinning">4.1. Isolating shear thinning</a></li>
+<li class="l2"><a href="#fluid-domain-probes-and-diagnostics">4.2. Fluid domain, probes and diagnostics</a></li>
+<li class="l1"><a href="#simulation-results">5. Simulation results</a></li>
+<li class="l2"><a href="#shear-thinning-enhances-material-delivery">5.1. Shear thinning enhances material delivery</a></li>
+<li class="l2"><a href="#low-inertia-flow-in-the-sucker-cavity">5.2. Low-inertia flow in the sucker cavity</a></li>
+<li class="l2"><a href="#surface-tension-effects-in-the-thin-cavity">5.3. Surface-tension effects in the thin cavity</a></li>
+<li class="l2"><a href="#injection-pressure-and-flow-control">5.4. Injection pressure and flow control</a></li>
+<li class="l2"><a href="#balanced-outlet-delivery">5.5. Balanced outlet delivery</a></li>
+<li class="l2"><a href="#flow-mechanisms-supporting-pva-injection-casting">5.6. Flow mechanisms supporting PVA injection casting</a></li>
+<li class="l1"><a href="#how-far-the-simulation-can-be-trusted">6. How far the simulation can be trusted</a></li>
+<li class="l2"><a href="#verification-completed">6.1. Verification completed</a></li>
+<li class="l2"><a href="#material-inputs">6.2. Material inputs</a></li>
+<li class="l2"><a href="#validation-against-physical-casting">6.3. Validation against physical casting</a></li>
+<li class="l2"><a href="#do-the-four-outlets-fill-simultaneously">6.4. Do the four outlets fill simultaneously?</a></li>
+<li class="l1"><a href="#casting-quality-and-sucker-performance">7. Casting quality and sucker performance</a></li>
+<li class="l1"><a href="#plan-and-future-work">8. Plan and future work</a></li>
+<li class="l1"><a href="#conclusion">9. Conclusion</a></li>
+<li class="l1"><a href="#appendix-a.-contributions">Appendix A. Contributions</a></li>
+<li class="l1"><a href="#appendix-b.-equations-and-numerical-assurance">Appendix B. Equations and numerical assurance</a></li>
+<li class="l2"><a href="#b.1.-constitutive-model">B.1. Constitutive model</a></li>
+<li class="l2"><a href="#b.2.-governing-equations">B.2. Governing equations</a></li>
+<li class="l2"><a href="#b.3.-corrected-postprocessing">B.3. Corrected postprocessing</a></li>
+<li class="l2"><a href="#b.4.-geometry-and-numerical-verification">B.4. Geometry and numerical verification</a></li>
+<li class="l2"><a href="#b.5.-capillary-pressure-scale">B.5. Capillary-pressure scale</a></li>
+<li class="l2"><a href="#b.6.-derived-operating-comparisons">B.6. Derived operating comparisons</a></li>
+<li class="l2"><a href="#b.7.-sensitivity-of-the-capillary-interpretation">B.7. Sensitivity of the capillary interpretation</a></li>
+<li class="l2"><a href="#b.8.-fine-mesh-probe-study-and-outlet-geometry">B.8. Fine-mesh probe study and outlet geometry</a></li>
+<li class="l1"><a href="#appendix-c.-planned-measurements-and-data-records">Appendix C. Planned measurements and data records</a></li>
+<li class="l1"><a href="#appendix-d.-physical-size-pva-pressure-series">Appendix D. Physical size PVA pressure series</a></li>
+<li class="l2"><a href="#d.1.-global-domain-and-supply-response">D.1. Global domain and supply response</a></li>
+<li class="l2"><a href="#d.2.-cavity-transport-and-branch-balance">D.2. Cavity transport and branch balance</a></li>
+<li class="l1"><a href="#references">References</a></li></ul></nav>
+<main>
+<header class="hero">
+<p class="kicker">CDE4301 Innovation and Design Capstone · Interim Report</p>
+<h1 class="title">Flow Analysis for Injection Manufacturing of PVA Hydrogel Suckers</h1>
+<p class="meta"><strong>Qi Ji</strong> (A0276904W) · Civil Engineering, 2023 · 14 November 2026</p>
+<p class="meta">Project supervisor: Prof. Yu Jun Tan<br>Mentor: Zhihang Qin, PhD Candidate, supervised by Prof. Cecilia Laschi (main supervisor) and Prof. Yu Jun Tan (co-supervisor)</p>
+<p><a class="btn" href="A0276904W_Qi_Ji_Interim_Report.pdf">Download PDF version</a></p>
+</header>
+<article>
+<h1 id="abstract">Abstract</h1>
+<p>Injection casting is one of the primary manufacturing methods for
+soft robotic components, and it typically relies on commercial
+elastomers such as silicone rubbers. Before curing, these elastomers are
+injected as liquid precursors that behave nearly as Newtonian fluids.
+Their viscosity therefore remains high even in the narrow feed necks of
+miniature, thin-walled parts, which creates severe flow resistance and
+risks incomplete filling. In contrast, shear-thinning liquids lower
+their viscosity under the high shear at the restriction itself. This
+reduces the flow resistance and facilitates rapid material delivery
+through narrow passages. The viscosity then recovers in the low-shear
+cavity, which supports stable filling. Physically crosslinked hydrogel
+pre-gel solutions are representative shear-thinning liquids used in soft
+robotics. Among these hydrogels, polyvinyl alcohol (PVA) offers
+convenient freeze–thaw gelation and strong mechanical properties. This
+study therefore takes a PVA pre-gel solution as the example and analyzes
+the closed injection casting of a thin-walled sucker.</p>
+<p>To evaluate this molding process, a COMSOL multiphysics model was
+established to compare a Carreau shear-thinning fluid with a Newtonian
+control of equal zero-shear viscosity (20 Pa·s) under identical geometry
+and pressure. Viscosity reduction in the feed passages (0.55–0.70 Pa·s
+at 450 kPa) yields a 34-fold increase in velocity and a 33-fold increase
+in flow rate relative to the control. Meanwhile, the cavity flow remains
+viscous-dominated and capillary-assisted (Re ≪ 1, Ca &lt; 1). The
+symmetric outlets share the flow uniformly (24.97–25.03%) across the
+50–600 kPa operating range. However, raising the pressure from 450 to
+600 kPa brings Ca in the cavity close to one. The minimum pressure that
+meets the supply requirement is therefore identified as optimal. The
+fabricated PVA suckers show no visible defects and generate a passive
+suction force of approximately 2.5 N, which further confirms the quality
+of the casting.</p>
+<p><strong>Word count:</strong> 2,986 <em>(Sections 1–9; excludes
+headings, captions, tables and equations)</em></p>
+<h1 id="introduction-soft-robots-and-the-casting-problem">1.
+Introduction: soft robots and the casting problem</h1>
+<p>Soft robots move and grasp through the deformation of compliant
+bodies (Laschi, 2022; Rus &amp; Tolley, 2015). To harness such compliant
+behavior, structural components rely heavily on soft materials that are
+capable of undergoing large, continuous deformation. Injection casting
+serves as one of the primary methods for shaping these materials into
+soft robotic components, typically utilizing commercial elastomers such
+as silicone rubbers (Marchese et al., 2015). During casting, these
+uncured elastomers are injected into the mold as liquid precursors
+before curing into soft solids. This manufacturing route is widely used
+to produce miniature, thin-walled geometries, such as an
+octopus-inspired sucker. Because effective attachment requires sealing a
+thin peripheral rim against a surface (Tramacere et al., 2013), such
+structures demand that the material be successfully delivered through a
+single narrow neck to fill the rim completely and free of voids.</p>
+<p>Uncured silicone precursors are nearly Newtonian. They present the
+same high viscosity inside a narrow neck as in an open cavity. This
+unreduced viscosity creates high flow resistance at the restriction,
+leaving fine features prone to incomplete filling and trapped air. In
+contrast, shear-thinning liquids drop in viscosity where shear is
+highest—at the narrowest restriction—and recover in the slow flow of the
+cavity. This selective thinning lowers hydraulic resistance at the
+supply bottleneck to accelerate cavity feeding, while viscosity recovery
+in the wider cavity keeps the cavity flow slow. Many physically
+crosslinked hydrogel pre-gel solutions are shear-thinning (Chen et al.,
+2017) and have broad applications in soft actuators and robot bodies
+(Sun et al., 2012; Yuk et al., 2017). In particular, polyvinyl alcohol
+(PVA) hydrogels offer convenient physical crosslinking via freeze–thaw
+cycling and strong mechanical properties (Holloway et al., 2013).
+Accordingly, this study adopts the PVA hydrogel pre-gel solution as a
+representative shear-thinning material to investigate closed injection
+casting for soft robotics.</p>
+<p>While soft-robot casting still relies largely on empirical recipes
+(Marchese et al., 2015; Wallin et al., 2018), mold-filling simulation is
+well established in thermoplastic injection molding (Kennedy &amp;
+Zheng, 2013). Applying mold-flow analysis to PVA sucker casting, this
+project quantifies how shear thinning and injection pressure govern neck
+delivery and cavity transport, providing a physical basis to select
+injection settings and interpret cast-part quality.</p>
+<h1 id="process-research-question-and-hypothesis">2. Process, research
+question and hypothesis</h1>
+<h2 id="why-closed-injection-casting">2.1. Why closed injection
+casting</h2>
+<p>Open casting relies on gravity, which provides insufficient driving
+force through a narrow neck (Marchese et al., 2015), while direct ink
+writing is limited by printability and interlayer bonding (Cheng et al.,
+2019; Wallin et al., 2018). Closed injection casting overcomes both
+issues: applied pressure drives the precursor through the restriction,
+and the mold forms the part in one piece with the exact sucker geometry.
+The mold also fixes where liquid enters and where air escapes.
+Consequently, the simulation and the physical casting share the same
+geometry and boundary conditions.</p>
+<h2 id="filling-the-sucker-mold-why-viscosity-decides">2.2. Filling the
+sucker mold: why viscosity decides</h2>
+<p>Image 1 shows one half of the split sucker mold and its core insert.
+Achieving a complete part requires the solution to traverse the neck and
+reach the thin rim before air is trapped. Viscosity governs the
+resistance of both steps, and the neck, as the narrowest passage, limits
+the supply. Unlike a Newtonian precursor that maintains the same
+viscosity everywhere, a shear-thinning solution would thin locally in
+the high-shear neck, lowering resistance precisely at this
+bottleneck.</p>
+<p><img loading="lazy" src="fig-image1.png" 
+alt="SOLIDWORKS model of one sucker mold half with core insert, labelled inlet, narrow neck, sucker cavity, core insert and outlet." /></p>
+<p class="cap">Image 1: One half of the sucker mold with its core insert. The feed
+neck connects the inlet to the thin cavity, and four outlets let air
+leave the cavity.</p>
+<h2 id="shear-and-thermal-thinning">2.3. Shear and thermal thinning</h2>
+<p>The PVA pre-gel solution thins with both shear rate and temperature
+(Image 2). At 25 °C, its viscosity starts near 20 Pa·s at low shear and
+drops to about 2.7 Pa·s at 1000 s⁻¹, while warmer solutions are less
+viscous across all shear rates. Temperature thus sets the baseline
+viscosity curve. Injection pressure sets how fast the solution flows and
+therefore the shear rate reached inside the mold, which determines where
+on that curve the solution operates. To isolate pressure-driven shear
+effects, this study fixes the temperature and varies the injection
+pressure.</p>
+<p><img loading="lazy" src="fig-image2.png" 
+alt="Viscosity of the PVA pre-gel solution versus shear rate and temperature: colour map and five temperature curves from 25 to 80 degrees Celsius." /></p>
+<p class="cap">Image 2: Viscosity of the PVA pre-gel solution against shear rate at
+25–80 °C: (a) map over temperature and shear rate; (b) curves at five
+temperatures.</p>
+<h2 id="research-question-hypothesis-and-objectives">2.4. Research
+question, hypothesis and objectives</h2>
+<p>The research question is how the shear-thinning rheology of the PVA
+solution and the injection pressure govern material delivery through the
+neck and flow within the cavity. The hypothesis follows from two facts
+known from the experiments and mold design: rheological measurements
+show that the viscosity of the PVA solution falls as the shear rate
+rises (Image 2), and the mold forces the flow through a narrow neck
+whose cross-section is much smaller than that of the cavity, ensuring a
+higher shear rate in the neck than in the cavity. The solution is
+therefore expected to thin where supply is restricted and to stay
+viscous where the part forms.</p>
+<p>The simulation tests this expectation and quantifies what remains
+unaddressed, namely the exact magnitude of the supply increase and
+whether the cavity flow remains slow and viscous-dominated as injection
+pressure rises. The objectives encompass simulating flow through the
+mold fluid domain, benchmarking the PVA solution against a matched
+Newtonian control, mapping the flow response across 50–600 kPa, and
+establishing rational injection settings. These settings will then be
+validated through casting trials based on three performance metrics:
+fill completeness, visible defects, and dimensional accuracy.</p>
+<h1 id="materials-mold-and-completed-work">3. Materials, mold and
+completed work</h1>
+<h2 id="adopted-formulation">3.1. Adopted formulation</h2>
+<p>This study uses a single PVA formulation, which is injected as a
+pre-gel solution and gelled inside the mold by freeze–thaw cycling (the
+formulation was developed by Zhihang Qin, a PhD candidate in Prof.
+Cecilia Laschi’s group, in collaboration with Prof. Yu Jun Tan’s group;
+its composition is unpublished and cannot be disclosed in this report).
+Keeping the formulation fixed makes the manufacturing conditions the
+only variables. Mold filling depends on how the viscosity of the
+solution changes with shear rate and temperature, and these curves are
+shown in Image 2.</p>
+<h2 id="from-mold-design-to-fabricated-samples">3.2. From mold design to
+fabricated samples</h2>
+<p>The simulation fluid domain represents the internal volume of the
+mold—comprising the feed channel, neck, cavity, and outlet
+passages—matching the exact space occupied by the solution during
+casting. Under the mentor’s guidance, I performed all simulations,
+parameter sweeps, verification checks, and post-processing reported in
+Sections 4–6. Appendix A states the contributions in full. Application
+samples are produced via precursor mixing, centrifugal degassing to
+remove bubbles, syringe loading, pneumatic injection into the closed
+split mold (Image 3), in-mold freeze–thaw gelation, and demolding.</p>
+<p><img loading="lazy" src="fig-image3.jpg" 
+alt="Injection setup: compressor-driven dispenser and syringe delivery into the closed split mold." /></p>
+<p class="cap">Image 3: Injection setup in the laboratory: (a) compressor-driven
+dispenser; (b) syringe delivery into the closed split mold.</p>
+<h2 id="completed-work-and-technical-challenges">3.3. Completed work and
+technical challenges</h2>
+<p>Table 1 summarizes this semester’s work. Several steps required
+solving technical problems before the results could be trusted. The main
+ones were extracting a watertight fluid domain from a split mold with a
+core insert, detecting and correcting a model-scale error, and placing
+probes inside thin passages.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Work package</strong></th>
+<th><strong>Status</strong></th>
+<th><strong>Technical difficulty resolved</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fluid domain</td>
+<td>Completed</td>
+<td>One connected, watertight domain (inlet, feed, neck, cavity, four
+outlets) extracted from the split mold by Boolean operations; inlet and
+outlet boundaries identified</td>
+</tr>
+<tr class="even">
+<td>Physical-scale correction</td>
+<td>Completed</td>
+<td>Re-saved geometry used mm with meter-based coordinates; error
+detected, corrected by a factor of 1000, and 27 model files rebuilt and
+re-solved at 17.204 × 13.543 × 25.32 mm</td>
+</tr>
+<tr class="odd">
+<td>Matched comparison</td>
+<td>Completed</td>
+<td>Newtonian control with identical geometry, mesh and boundaries; Re
+and Ca expressions corrected to each model’s local viscosity</td>
+</tr>
+<tr class="even">
+<td>Pressure series</td>
+<td>Completed</td>
+<td>Twelve PVA cases (50–600 kPa) re-solved on a common 111,713-element
+mesh; 48 outlet-flux integrals evaluated</td>
+</tr>
+<tr class="odd">
+<td>Probe and mesh study</td>
+<td>Completed</td>
+<td>Eleven probes placed inside thin passages with snapping and
+extrapolation disabled; 95,815- and 377,218-element meshes compared</td>
+</tr>
+<tr class="even">
+<td>Fabrication</td>
+<td>Completed</td>
+<td>Mixing, centrifugal deairing, closed-mold injection, freeze–thaw and
+demolding of thin-rimmed suckers</td>
+</tr>
+<tr class="odd">
+<td>Suction test</td>
+<td>Preliminary</td>
+<td>Instron pull-off curve on a flat 3D-printed surface; practical 0.2
+kg lift</td>
+</tr>
+<tr class="even">
+<td>Validation</td>
+<td>Planned</td>
+<td>Casting trials, outlet-arrival tests and silicone castings (Section
+8)</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 1: Work completed this semester and the technical difficulty
+resolved in each package.</p>
+<h1 id="simulation-design">4. Simulation design</h1>
+<h2 id="isolating-shear-thinning">4.1. Isolating shear thinning</h2>
+<p>The closed mold precludes direct observation of the internal
+velocity, shear rate, and viscosity during casting. Moreover, physical
+trial-and-error is both time-consuming and material-intensive. Numerical
+simulation is therefore used to resolve these internal fields and to
+screen injection settings prior to physical experiments. The simulation
+is performed in COMSOL Multiphysics 6.2, where the flow is solved as
+single-phase, incompressible, isothermal laminar flow (Table 2; COMSOL,
+n.d.-a). Under this single-phase description, the injection is
+represented as a flow that develops in the mold under the applied
+pressure. The displacement of air is not modeled explicitly, as this
+would require a two-phase model. The pre-gel solution, referred to as
+“PVA” in Sections 4–6, follows a Carreau law fitted to the measured
+viscosity (COMSOL, n.d.-d):</p>
+<p><span class="math inline">\(\mu(\dot{\gamma})\  = \ \mu_{\infty}\  +
+\ (\mu_{0}\  - \ \mu_{\infty})\ {\lbrack 1\  + \
+{(\lambda\dot{\gamma})}^{2}\rbrack}^{\frac{n\  - \
+1}{2}}\)</span>  (1)</p>
+<p>The fitted parameters are μ₀ = 20 Pa·s, μ<sub>∞</sub> = 0.5 Pa·s, λ =
+2 s, and n = 0.45. To isolate the effect of shear thinning, the PVA
+solution is compared with a Newtonian control. This control has a
+constant viscosity of 20 Pa·s, equal to μ₀. Both liquids therefore have
+the same viscosity at low shear. They also share the same geometry,
+mesh, and boundary conditions. Any difference in flow consequently
+arises from shear thinning alone. The control represents a silicone-type
+precursor in its Newtonian behavior. Measurements of silicone viscosity
+and physical silicone castings are planned for semester 2 (Section 8).
+Twelve PVA cases at pressures from 50 to 600 kPa test whether the
+conclusions depend on a single setting. The matched comparison with the
+control is made at 450 kPa.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Item</strong></th>
+<th><strong>Setting</strong></th>
+<th><strong>Status</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Geometry</td>
+<td>Fluid domain of the mold, 17.204 × 13.543 × 25.32 mm, comprising
+gate, feed channel, neck, cavity and four outlets</td>
+<td>Mold geometry; scale verified</td>
+</tr>
+<tr class="even">
+<td>Physics</td>
+<td>COMSOL 6.2 Laminar Flow (spf2): incompressible, isothermal, single
+phase; no-slip walls</td>
+<td>Single-phase flow</td>
+</tr>
+<tr class="odd">
+<td>Boundaries</td>
+<td>Inlet total pressure 50–600 kPa (12 cases); outlets 0 Pa static</td>
+<td>Equal for both liquids</td>
+</tr>
+<tr class="even">
+<td>PVA</td>
+<td>Carreau: μ<sub>0</sub> 20 Pa·s, μ<sub>∞</sub> 0.5 Pa·s, λ 2 s, n
+0.45</td>
+<td>Fitted to measured viscosity</td>
+</tr>
+<tr class="odd">
+<td>Newtonian control</td>
+<td>Newtonian, 20 Pa·s at all shear rates</td>
+<td>Matched to PVA μ<sub>0</sub></td>
+</tr>
+<tr class="even">
+<td>Density, temperature</td>
+<td>1070 kg/m³; 293.15 K</td>
+<td>Equal for both liquids</td>
+</tr>
+<tr class="odd">
+<td>Mesh and time</td>
+<td>Common mesh of 111,713 elements; finer 377,218-element probe model;
+evaluated at t = 1 s</td>
+<td>Checks in Section 6.1</td>
+</tr>
+<tr class="even">
+<td>Diagnostics</td>
+<td>Re and Ca with local μ; L<sub>ref</sub> = 1 mm; σ<sub>ref</sub> =
+0.05 N/m</td>
+<td>σ<sub>ref</sub> assumed</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 2: Simulation set-up shared by the pressure series and the
+matched comparison.</p>
+<h2 id="fluid-domain-probes-and-diagnostics">4.2. Fluid domain, probes
+and diagnostics</h2>
+<p>Image 4 shows the fluid domain. Local probes are needed because a
+satisfactory total flow rate can coexist with a cavity region that
+hardly moves.</p>
+<p><img loading="lazy" src="fig-image4.png" 
+alt="COMSOL fluid domain of the sucker mold with gate, feed channel, neck, cavity, outlet branches and probe points A to D." /></p>
+<p class="cap">Image 4: Fluid domain extracted from the mold CAD (COMSOL). Teal:
+inlet and outlet faces; coral: probes A (neck), B (cavity entry), C and
+D (cavity) and one before each outlet (coordinates in Appendix B).</p>
+<p>The flow at these probes is characterized by two dimensionless
+numbers. The Reynolds number, Re, compares inertia with viscous forces.
+The capillary number, Ca, compares viscous forces with surface tension.
+They are defined as (COMSOL, n.d.-b, n.d.-e):</p>
+<p><span class="math inline">\(Re\  = \ \frac{\rho
+UL_{ref}}{\mu}\)</span>  (2)</p>
+<p><span class="math inline">\(Ca\  = \ \frac{\mu
+U}{\sigma_{ref}}\)</span>  (3)</p>
+<p>where ρ is the density, U is the local speed, and μ is the local
+viscosity of each liquid. The reference length is L<sub>ref</sub> = 1
+mm, and the surface tension is assumed to be σ<sub>ref</sub> = 0.05 N/m.
+Because the model is single-phase, it contains no explicit liquid–air
+interface. Ca therefore measures the ratio of the viscous and
+surface-tension force scales (Appendix B).</p>
+<h1 id="simulation-results">5. Simulation results</h1>
+<h2 id="shear-thinning-enhances-material-delivery">5.1. Shear thinning
+enhances material delivery</h2>
+<p>At 450 kPa, the PVA solution reaches 8.45 m/s at neck Probe A,
+compared with 0.248 m/s for the Newtonian control, which is 34 times
+higher. The delivered flow rate is 13.90 mL/s, compared with 0.4245 mL/s
+for the control, a 32.75-fold increase (Image 5, Table 3). This gain is
+caused by shear thinning. The shear rate is highest in the feed channel
+and neck, where the apparent viscosity of PVA falls to about 0.55–0.7
+Pa·s (Image 6). The flow resistance therefore drops exactly where the
+geometry restricts the flow. For casting, this means a strong supply
+into the cavity. A faster flow, however, raises the question of
+stability, which Sections 5.2 and 5.3 examine.</p>
+<p><img loading="lazy" src="fig-image5.png" 
+alt="PVA speed on seven yz slices at 450 kPa, linear colour range 0 to 12 m/s." />
+<img loading="lazy" src="fig-image6.png" 
+alt="Newtonian silicone reference speed on the same slices, linear colour range 0 to 12 m/s." /></p>
+<p class="cap">Image 5: Speed at 450 kPa and t = 1 s on seven yz slices for PVA and
+the Newtonian control (panel titles), with the same camera and a linear
+range of 0–12 m/s. Dark blue indicates low speed.</p>
+<p><img loading="lazy" src="fig-image7.png" 
+alt="PVA apparent viscosity on the same slices at 450 kPa, logarithmic colour range 0.5 to 20 Pa s." /></p>
+<p class="cap">Image 6: PVA apparent viscosity at 450 kPa and t = 1 s on the same
+slices (logarithmic range 0.5–20 Pa·s): lowest in the feed, neck and
+outlet branches, where shear is highest, and highest in low-shear rim
+corners.</p>
+<table >
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Quantity</strong></th>
+<th><strong>PVA (Carreau)</strong></th>
+<th><strong>Newtonian control</strong></th>
+<th><strong>PVA/control</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Inward flow (mL/s)</td>
+<td>13.90</td>
+<td>0.4245</td>
+<td>32.75</td>
+</tr>
+<tr class="even">
+<td>Maximum speed (m/s)</td>
+<td>9.435</td>
+<td>0.2834</td>
+<td>33.29</td>
+</tr>
+<tr class="odd">
+<td>Speed at neck A (m/s)</td>
+<td>8.446</td>
+<td>0.2483</td>
+<td>34.0</td>
+</tr>
+<tr class="even">
+<td>Speed at cavity C / D (mm/s)</td>
+<td>9.11 / 20.55</td>
+<td>0.521 / 1.019</td>
+<td>17.5 / 20.2</td>
+</tr>
+<tr class="odd">
+<td>Apparent viscosity (Pa·s)</td>
+<td>0.5426–19.48</td>
+<td>20</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Maximum shear rate (s⁻¹)</td>
+<td>3.444 × 10⁴</td>
+<td>916.7</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>Re at C / D</td>
+<td>0.0042 / 0.012</td>
+<td>2.8 × 10⁻⁵ / 5.5 × 10⁻⁵</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Maximum Re (feed)</td>
+<td>17.42</td>
+<td>0.01516</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>Ca at C / D</td>
+<td>0.43 / 0.76</td>
+<td>0.21 / 0.41</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>Ca at neck A</td>
+<td>104</td>
+<td>99.3</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>Inlet–outlet flux discrepancy (%)</td>
+<td>0.6365</td>
+<td>2.411</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 3: Matched comparison at 450 kPa and t = 1 s on the common
+mesh. Probe values are point samples (Table B1); Re and Ca use each
+liquid’s local viscosity.</p>
+<h2 id="low-inertia-flow-in-the-sucker-cavity">5.2. Low-inertia flow in
+the sucker cavity</h2>
+<p>Re increases with speed, so its distribution resembles that of the
+speed (Image 7). The quantity of interest is its magnitude relative to
+one. In the cavity, Re is 0.004–0.012 for PVA and about 10⁻⁵ for the
+Newtonian control. Viscous forces therefore dominate inertia for both
+liquids in the region where the sucker forms. This suppresses
+inertia-driven jetting and folding of the front, both of which can trap
+air. Within this regime, the Re of PVA is higher than that of the
+control, because PVA flows faster at a lower local viscosity. In the
+feed channel, PVA reaches Re ≈ 17. This flow is laminar but not free of
+inertia. The condition Re ≪ 1 therefore holds in the cavity but not in
+the whole domain.</p>
+<p><img loading="lazy" src="fig-image8.png" 
+alt="PVA Reynolds number on seven yz slices at 450 kPa, shared range 0 to 20." />
+<img loading="lazy" src="fig-image9.png" 
+alt="Newtonian reference Reynolds number on the same slices, shared range 0 to 20." /></p>
+<p><img loading="lazy" src="fig-image10.png" 
+alt="Sketches of high-Re jetting and a smooth low-Re front, with cavity and feed Re values on a logarithmic regime bar." /></p>
+<p class="cap">Image 7: Reynolds number at 450 kPa (L<sub>ref</sub> = 1 mm) for PVA
+and the Newtonian control (panel titles), shared range 0–20, and regime
+summary. Both cavities are viscous-dominated and the PVA feed is
+laminar. The control panel looks uniformly dark because its values are
+small.</p>
+<h2 id="surface-tension-effects-in-the-thin-cavity">5.3. Surface-tension
+effects in the thin cavity</h2>
+<p>A small Ca indicates that surface tension remains significant. In the
+cavity, Ca is 0.43–0.76 for PVA and 0.21–0.41 for the Newtonian control,
+which is below one for both liquids. At the neck, Ca is about 100 for
+both, because pressure-driven viscous flow dominates there (Image 8). On
+a wetting mold surface, surface tension therefore still helps to draw
+liquid into the rim and corners, as in capillary-assisted mold filling
+(Caglar et al., 2019). Air entrainment at a moving contact line also
+depends on wetting and on how the air escapes (Chan et al., 2013). At
+Probes C and D, PVA moves 17.5–20.2 times faster than the control and
+still remains below Ca = 1. Its lower local viscosity also accelerates
+capillary penetration, whose rate scales with σ/μ (Washburn, 1921). This
+benefit requires a wetting contact angle. It also depends on the assumed
+σ: the condition Ca &lt; 1 at D holds as long as σ exceeds 37.8 mN/m
+(Appendix B.7).</p>
+<p><img loading="lazy" src="fig-image11.png" 
+alt="PVA capillary number on seven yz slices at 450 kPa, shared range 0 to 200." />
+<img loading="lazy" src="fig-image12.png" 
+alt="Newtonian reference capillary number on the same slices, shared range 0 to 200." /></p>
+<p><img loading="lazy" src="fig-image13.png" 
+alt="Sketch of viscous drag against surface tension at a front, with cavity and feed Ca values on a logarithmic regime bar." /></p>
+<p class="cap">Image 8: Capillary number at 450 kPa (assumed σ<sub>ref</sub> = 0.05
+N/m) for PVA and the Newtonian control (panel titles), shared range
+0–200, and regime summary. Both cavities have Ca &lt; 1, whereas the
+feed is viscous-dominated. Ca is post-processed from the single-phase
+solution.</p>
+<h2 id="injection-pressure-and-flow-control">5.4. Injection pressure and
+flow control</h2>
+<p>Across the twelve PVA cases, the inward flow rises from 1.170 mL/s at
+50 kPa to 18.23 mL/s at 600 kPa. Over the same range, Probes C and D
+maintain Re &lt; 0.02 and Ca &lt; 1 (Image 9; Appendix D). The
+conclusions therefore do not depend on a single setting. Even at 50 kPa,
+PVA supplies 2.756 times the flow of the control at 450 kPa. This is
+achieved at an inlet pressure that is 88.9% lower, which offers a
+gentler option when modest throughput suffices. Higher pressure is not
+automatically better. From 450 to 600 kPa, the flow rises by 31%, while
+Ca at D increases to 0.93 and approaches one. The working rule is
+therefore to use the lowest pressure that meets the required supply.
+This rule remains to be confirmed by casting. Running the control at all
+twelve pressures is the next numerical step.</p>
+<p><img loading="lazy" src="fig-image14.png" 
+alt="PVA inward flow across twelve pressures with the single reference value at 450 kPa, and capillary number at C and D across pressure." /></p>
+<p class="cap">Image 9: PVA pressure series at t = 1 s (common mesh): (a) inward
+flow at twelve pressures, with the Newtonian control at 450 kPa; (b) Ca
+at C and D (σ<sub>ref</sub> = 0.05 N/m). The line Ca = 1 is a
+force-scale reference.</p>
+<h2 id="balanced-outlet-delivery">5.5. Balanced outlet delivery</h2>
+<p>The four outlets are located at the corners of a 9.05 mm square
+centered on the neck axis. They have identical areas (Image 10). In the
+fine model, each outlet carries 24.99–25.02% of the flow. The speeds in
+the four branches differ by 0.6%. Across all twelve pressures, the
+shares remain within 24.97–25.03%.</p>
+<p><img loading="lazy" src="fig-image15.png" 
+alt="Streamlines seeded across the inlet in the PVA model at 450 kPa, coloured by speed, reaching the four outlets." />
+<img loading="lazy" src="fig-image16.png" 
+alt="Outlet layout in the xz projection: four outlets at the corners of a 9.05 mm square around the neck axis, with flow shares 24.99 to 25.02 percent." /></p>
+<p class="cap">Image 10: Outlet balance at 450 kPa, showing inlet-seeded streamlines
+colored by speed (a) and the outlet layout with fine-model flow shares
+(b).</p>
+<h2 id="flow-mechanisms-supporting-pva-injection-casting">5.6. Flow
+mechanisms supporting PVA injection casting</h2>
+<p>Table 4 combines the checks. PVA thins sufficiently under shear to
+supply the cavity quickly. At the same time, the cavity flow remains
+viscous-dominated and capillary-assisted. This combination is the
+behavior that the sucker mold requires.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Check</strong></th>
+<th><strong>Finding</strong></th>
+<th><strong>Value for casting</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Speed</td>
+<td>At equal pressure, PVA is 34× faster at the neck and delivers 32.75×
+the flow</td>
+<td>Sufficient supply into the cavity</td>
+</tr>
+<tr class="even">
+<td>Re</td>
+<td>Cavity Re ≪ 1 for both liquids; PVA Re &gt; control Re</td>
+<td>Stable, viscous-dominated flow in the cavity</td>
+</tr>
+<tr class="odd">
+<td>Ca</td>
+<td>Cavity Ca &lt; 1 for both liquids; 0.43–0.76 for PVA</td>
+<td>Surface tension still helps fill the rim and corners on a wetting
+wall</td>
+</tr>
+<tr class="even">
+<td>Pressure</td>
+<td>Re &lt; 0.02 and Ca &lt; 1 at C and D in all 12 cases; outlets
+24.97–25.03%</td>
+<td>Pressure can be set for throughput without leaving this regime</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 4: Simulation findings and their value for sucker casting.</p>
+<h1 id="how-far-the-simulation-can-be-trusted">6. How far the simulation
+can be trusted</h1>
+<p>A simulation can fail at four points: in its design, which covers the
+physics and the material law; in the import of the CAD model into
+COMSOL; in the numerical solution; and in the post-processing. The
+checks below follow standard verification and validation practice
+(Oberkampf &amp; Trucano, 2002). Verification asks whether the equations
+are solved correctly. Validation asks whether they represent the real
+casting.</p>
+<h2 id="verification-completed">6.1. Verification completed</h2>
+<p>The scale of the imported geometry was verified first (Table 5). Face
+areas match the design, and inlet and outlet flows agree within 0.075%
+on the fine mesh. Refining the mesh from the coarse to the fine model
+changed the inlet flow, a global quantity, by 6.1%. Trends and
+comparisons are therefore reliable enough to guide experiments. Local
+values are more sensitive to the mesh. On the same refinement, probe
+speeds changed by up to 16.7% and shear rates by up to 131%. Local
+magnitudes therefore require a formal grid-convergence study (Celik et
+al., 2008).</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Failure point</strong></th>
+<th><strong>Check performed</strong></th>
+<th><strong>Outcome</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CAD to fluid domain</td>
+<td>Boolean extraction confirmed as one connected domain; inlet 37 and
+outlets 14, 16, 55 and 57 re-identified after rebuilding</td>
+<td>Passed</td>
+</tr>
+<tr class="even">
+<td>Import scale</td>
+<td>mm/m inconsistency found; ×1000 correction; spans 17.204 × 13.543 ×
+25.32 mm verified; 27 files rebuilt</td>
+<td>Corrected</td>
+</tr>
+<tr class="odd">
+<td>Geometry fidelity</td>
+<td>Each outlet face 1.0798 × 10⁻⁶ m²; their sum equals the 4.319 × 10⁻⁶
+m² inlet face; volume 0.674 mL</td>
+<td>Symmetry preserved</td>
+</tr>
+<tr class="even">
+<td>Conservation</td>
+<td>Flux discrepancy 0.6365% (common mesh) and 0.07465% (fine mesh)</td>
+<td>PVA &lt; 1%; matched control 2.411%</td>
+</tr>
+<tr class="odd">
+<td>Mesh sensitivity</td>
+<td>95,815 vs 377,218 elements: inlet flow 6.1%, probe speed ≤ 16.7%,
+shear rate ≤ 131%</td>
+<td>Global passed; local open</td>
+</tr>
+<tr class="even">
+<td>Time behaviour</td>
+<td>Probe speeds vary by ≤ 0.0011% over 0.5–1 s</td>
+<td>Steady operating point</td>
+</tr>
+<tr class="odd">
+<td>Probes</td>
+<td>All eleven inside the domain; snapping and extrapolation
+disabled</td>
+<td>Passed</td>
+</tr>
+<tr class="even">
+<td>Post-processing</td>
+<td>Re and Ca evaluated with local viscosity at the same point; constant
+20 Pa·s used throughout for the control</td>
+<td>Corrected and verified</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 5: Verification checks completed, organized by the point at
+which a simulation can fail.</p>
+<h2 id="material-inputs">6.2. Material inputs</h2>
+<p>The model takes three material inputs: the Carreau viscosity law, the
+density, and a reference surface tension (Table 2). The Carreau law is
+fitted to the measured viscosity of the PVA solution. It reproduces the
+measured low-shear plateau of about 20 Pa·s (Image 2). The model is
+single-phase and treats the liquid as purely viscous, without wall slip,
+elasticity, or yield stress. The pressure is applied at the mold inlet.
+The comparison is constructed so that these choices affect both liquids
+equally. The PVA solution and the Newtonian control share the same
+geometry, mesh, and boundary conditions. Any error common to both
+therefore largely cancels. Consequently, the ratios between the two
+liquids and the flow regimes are more reliable than the absolute values.
+In the cavity, both liquids give Re far below one and Ca below one. The
+conclusion about the cavity regime therefore holds for both.</p>
+<h2 id="validation-against-physical-casting">6.3. Validation against
+physical casting</h2>
+<p>Validation will proceed from simple to complete (Table 6). Following
+the project plan, the model will be used to guide casting once two
+conditions are met. The filling time must agree within about 20%, and
+defects must appear where the model flags them.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Level</strong></th>
+<th><strong>Test</strong></th>
+<th><strong>Compared with</strong></th>
+<th><strong>Proposed target</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Solver set-up</td>
+<td>Straight tube with Newtonian and Carreau liquids</td>
+<td>Exact Hagen–Poiseuille and semi-analytical flow rate</td>
+<td>Error &lt; 1%</td>
+</tr>
+<tr class="even">
+<td>Geometry</td>
+<td>CAD cavity volume; mass of solution that fills the mold</td>
+<td>COMSOL volume, 0.674 mL</td>
+<td>Within 5%</td>
+</tr>
+<tr class="odd">
+<td>Pressure–flow</td>
+<td>Timed outflow mass at set pressures; transducer at the mold
+inlet</td>
+<td>Simulated Q(p)</td>
+<td>Within 20%</td>
+</tr>
+<tr class="even">
+<td>Flow split</td>
+<td>Outflow collected separately at each outlet</td>
+<td>25% per outlet</td>
+<td>Each 25 ± 2.5%</td>
+</tr>
+<tr class="odd">
+<td>Filling</td>
+<td>Transparent-mold video; outlet arrival sensors; short shots</td>
+<td>Two-phase filling model</td>
+<td>Fill time within 20%; arrival spread &lt; 5%</td>
+</tr>
+<tr class="even">
+<td>Part quality</td>
+<td>Bubble, weld-line and short-shot maps (ImageJ, 0–3 grade)</td>
+<td>Low-speed, high-viscosity regions</td>
+<td>Defects in flagged regions</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 6: Staged validation plan. Targets are proposed, and the 20%
+filling-time target follows the project plan.</p>
+<h2 id="do-the-four-outlets-fill-simultaneously">6.4. Do the four
+outlets fill simultaneously?</h2>
+<p>Simultaneous outflow matters because an outlet that floods first
+becomes a low-resistance exit. This slows filling elsewhere and risks
+trapping air. Section 5.5 shows that the four outlets carry equal shares
+of the flow. Equal hydraulic resistance, however, does not by itself
+determine the arrival times. The liquid crosses a partly filled cavity,
+in which feed momentum, gravity, and wetting can favor one side. Arrival
+will therefore be determined directly in four ways. The first is a
+two-phase level-set filling model with measured surface tension and
+contact angle (COMSOL, n.d.-c, n.d.-f), for which the target is an
+arrival spread below 5% of the fill time. The second is filming of a
+transparent printed mold. The third is a set of conductive contacts at
+the four outlets that log the arrival. The fourth is a series of short
+shots stopped at 80–95% of the cavity volume (Appendix B.8). If one
+outlet leads, three remedies are available: its diameter can be reduced,
+an overflow well can be added, or the mold can be reoriented so that the
+last-filling outlet is highest.</p>
+<h1 id="casting-quality-and-sucker-performance">7. Casting quality and
+sucker performance</h1>
+<p>The demolded PVA suckers retain their cup shape and neck connection.
+They show no visible defects (Image 11). They also form better than
+silicone castings. A side-by-side photographic comparison will be added
+next semester.</p>
+<p>The suction performance of the suckers was then assessed in a
+pull-off test on an Instron machine. The representative curve rises to
+about 2.5 N at a displacement of about 6.4 mm. In a practical check, one
+sucker lifted an object of about 0.2 kg. The weight of this object is
+1.96 N, and the measured peak exceeds it by about 27%. The two
+independent measurements therefore agree.</p>
+<p>The as-cast part cannot exceed the volume of the modeled fluid
+domain, 0.674 mL, which also includes the feed and outlet passages. Its
+mass is therefore below about 0.72 g. The payload of 0.2 kg consequently
+exceeds 270 times the mass of the sucker. Suction also requires an
+unbroken seal around the whole rim. Sustaining 2.5 N therefore indicates
+that the thin rim, which is the feature targeted by the flow analysis,
+filled without seal-breaking voids. These results were obtained with a
+first, unoptimized design. They are based on one representative curve.
+Repeated tests will establish repeatability.</p>
+<p><img loading="lazy" src="fig-image17.png" 
+alt="Demolded PVA sucker, Instron pull-off arrangement, test-principle sketch and representative pull-off curve peaking at about 2.5 N at 6.4 mm." /></p>
+<p class="cap">Image 11: Fabricated PVA sucker and first suction test: demolded
+sucker, Instron arrangement and test principle (a), and representative
+pull-off curve on a flat 3D-printed surface (b).</p>
+<h1 id="plan-and-future-work">8. Plan and future work</h1>
+<p>Each next step addresses an open question from Sections 5–7 (Table
+7). Work on the flow model comes first, because every later comparison
+depends on it. December is reserved for non-experimental work. Specimen
+allocations and records are given in Appendix C.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Open question</strong></th>
+<th><strong>Next step</strong></th>
+<th><strong>Output</strong></th>
+<th><strong>Timing</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Are local values converged, and does the advantage hold at all
+pressures?</td>
+<td>Three-mesh study; tube benchmark; Newtonian control at all 12
+pressures; two-phase filling model</td>
+<td>Converged values; predicted arrival times</td>
+<td>Dec 2026–Feb 2027</td>
+</tr>
+<tr class="even">
+<td>Does the simulation match the real casting?</td>
+<td>Pressure–flow, per-outlet outflow and filling tests; defect
+maps</td>
+<td>Validated or corrected model</td>
+<td>Jan–Mar 2027</td>
+</tr>
+<tr class="odd">
+<td>Do the four outlets fill simultaneously?</td>
+<td>Transparent mold, outlet sensors and short shots</td>
+<td>Arrival spread at the four outlets</td>
+<td>Jan–Mar 2027</td>
+</tr>
+<tr class="even">
+<td>Does PVA cast the sucker better than silicone?</td>
+<td>Same sucker mold cast in silicone at matched conditions;
+side-by-side photographs</td>
+<td>Fill completeness, defects, dimensions, pull-off force</td>
+<td>Jan–Mar 2027</td>
+</tr>
+<tr class="odd">
+<td>Thesis</td>
+<td>Outline and literature (Dec); writing (Feb–Mar); April buffer</td>
+<td>Final thesis</td>
+<td>Dec 2026–Apr 2027</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table 7: Plan linking each open question to its next step, output and
+timing.</p>
+<h1 id="conclusion">9. Conclusion</h1>
+<p>This work treats soft-robot casting as an engineered injection
+process. It uses a flow model of the sucker mold to test whether shear
+thinning helps. At equal pressure, PVA moves 34 times faster at the neck
+than a Newtonian control of equal zero-shear viscosity. At the same
+pressure, PVA also delivers 32.75 times the flow of this control.
+Meanwhile, the PVA flow in the cavity remains viscous-dominated and
+capillary-assisted. The four outlets share the PVA flow equally from 50
+to 600 kPa. These results rest on resolved technical obstacles, from
+fluid-domain extraction to probe placement in thin passages (Table 1).
+Verification establishes mass conservation and the fidelity of the
+geometry import. Casting trials and outlet-arrival tests will establish
+agreement with the real casting. Cast suckers already grip by suction,
+and one sucker lifted 0.2 kg. The tunable viscosity of PVA makes
+injection casting a promising route to soft suckers. In semester 2, this
+route will be benchmarked against silicone castings.</p>
+<h1 id="appendix-a.-contributions">Appendix A. Contributions</h1>
+<p>Zhihang Qin, the project mentor, designed the sucker and its mold and
+developed the PVA formulation. Under his guidance, I performed the
+rheological characterization, mold casting trials, mechanical pull-off
+testing, and all CFD modeling and verification analyses reported
+here.</p>
+<h1 id="appendix-b.-equations-and-numerical-assurance">Appendix B.
+Equations and numerical assurance</h1>
+<h2 id="b.1.-constitutive-model">B.1. Constitutive model</h2>
+<p>Implemented in COMSOL as
+muinf+(mu0-muinf)*(1+(lambda*spf2.sr)^2)^((nPVA-1)/2), the parameters
+define the Carreau law plotted in Image B1, also the a = 2 special case
+of Carreau–Yasuda: ρ = 1070 kg/m<sup>3</sup>, μ<sub>0</sub> = 20 Pa·s,
+μ<sub>∞</sub> = 0.5 Pa·s, λ = 2 s and n = 0.45. They describe the
+shear-thinning response of the PVA solution. The control uses constant μ
+= 20 Pa·s in both the solve and Re/Ca calculations.</p>
+<p><img loading="lazy" src="fig-image18.png" 
+alt="Image B1: Assigned PVA Carreau viscosity shown in two linear shear-rate windows, 0–10 and 0–1000 s⁻¹, with the same linear viscosity axis and the 0.5 Pa·s high-shear limit. This illustrates existing model inputs rather than measured rheology." /></p>
+<p class="cap">Image B1: Carreau viscosity over shear-rate ranges of 0–10 and 0–1000
+s⁻¹, with a common linear viscosity axis and a high-shear limit of 0.5
+Pa·s.</p>
+<h2 id="b.2.-governing-equations">B.2. Governing equations</h2>
+<p>For the incompressible, isothermal generalized Newtonian reference,
+with body forces omitted, continuity and momentum are:</p>
+<p><span class="math inline">\(\nabla \cdot u\  = \ 0\)</span>  (B1)</p>
+<p><span class="math inline">\(\rho\lbrack\frac{\partial u}{\partial
+t}\  + \ (u \cdot \nabla)u\rbrack\  = \  - \nabla p\  + \ \nabla \cdot
+\lbrack\mu(\dot{\gamma})(\nabla u\  + \ {(\nabla
+u)}^{T})\rbrack\)</span>  (B2)</p>
+<p>The rate-of-deformation tensor and shear-rate magnitude are:</p>
+<p><span class="math inline">\(D\  = \ \frac{1}{2}(\nabla u\  + \
+{(\nabla u)}^{T}),\ \ \ \ \ \dot{\gamma}\  = \
+{(2D:D)}^{\frac{1}{2}}\)</span>  (B3)</p>
+<p>Apparent viscosity is evaluated from the local shear-rate magnitude
+within the generalized Newtonian formulation.</p>
+<h2 id="b.3.-corrected-postprocessing">B.3. Corrected
+postprocessing</h2>
+<blockquote>
+<p>PVA Re: rhoPVA*spf2.U*1[mm]/spf2.mu</p>
+<p>Newtonian Re: rhoPVA*spf2.U*1[mm]/(20[Pa*s])</p>
+<p>PVA Ca: spf2.mu*spf2.U/(0.05[N/m])</p>
+<p>Newtonian Ca: 20[Pa*s]*spf2.U/(0.05[N/m])</p>
+</blockquote>
+<p>Velocity magnitude is spf2.U (m/s), shear-rate magnitude spf2.sr
+(1/s), apparent viscosity spf2.mu (Pa·s) and static gauge pressure p2
+(Pa). Re and Ca use colocated velocity and viscosity values. The
+Newtonian control uses constant viscosity 20 Pa·s. All reported
+quantities are evaluated from the corrected physical-size solutions.</p>
+<h2 id="b.4.-geometry-and-numerical-verification">B.4. Geometry and
+numerical verification</h2>
+<p>Both constitutive models were evaluated at t = 1 s in Study
+1/Solution 1 on matched meshes of 111,713 elements. Whole-domain extrema
+use COMSOL’s Lagrange-point numerical sampling and refinement. Local Re
+and Ca are evaluated as complete expressions at each sampling point.</p>
+<p>The geometry-scale correction reconciled metre-based coordinates with
+the millimetre import setting. Geometry-dependent coordinates and
+explicit mesh lengths were checked before rebuilding 27 affected model
+files. The verified spans are 17.204 × 13.543 × 25.32 mm. Mesh-based
+numerical integration gives a volume of 6.73849 × 10<sup>−7</sup>
+m<sup>3</sup>, an inlet area of 4.31923 × 10<sup>−6</sup> m<sup>2</sup>
+and a combined outlet area of 4.31924 × 10<sup>−6</sup>
+m<sup>2</sup>.</p>
+<p>Probe coordinates were checked against the rebuilt fluid domain.
+Common A–D locations in Table B1 give finite evaluations in both matched
+models. The finer PVA model uses eleven interior locations with boundary
+snapping and extrapolation disabled; coordinates and values are reported
+in Table B2.</p>
+<p>The control solves with constant μ = 20 Pa·s. Its Reynolds-number
+denominator and capillary-number viscosity factor were checked against
+that same constant, while PVA uses the solved apparent viscosity
+spf2.mu. The plots and scalar statistics were regenerated from the
+recomputed fields. These checks distinguish the constitutive response
+from an inconsistent diagnostic formula.</p>
+<p>Inward inlet flow is Q<sub>in</sub> = −∫ <strong>u</strong> ·
+<strong>n</strong> dA on boundary 37, and Q<sub>out</sub> is the outward
+integral over boundaries 14, 16, 55 and 57. The relative discrepancy
+|Q<sub>out</sub> − Q<sub>in</sub>|/max(Q<sub>in</sub>, Q<sub>out</sub>)
+is 0.6365% for the matched PVA case and 2.411% for the control. The
+finer PVA case gives 0.07465%. At constant density, these values also
+quantify the relative mass-flow discrepancy.</p>
+<p>The matched comparison uses 111,713 elements, linear velocity
+interpolation and relative tolerance 0.001. The supplementary PVA meshes
+contain 95,815 and 377,218 elements; their inlet-area and volume
+integrals differ by 3.211% and 0.4985%, respectively, relative to the
+fine values. The solver uses adaptive internal time steps. Further
+checks will examine mesh geometry, integration, tolerances and time
+stepping, with particular attention to gradients near sharp
+transitions.</p>
+<p>The time-dependent calculation approaches a steady operating point.
+Consistent initialization supplies the starting field, and the nearly
+unchanged velocities over 0.5–1 s support use of the t = 1 s output for
+comparing injection conditions.</p>
+<p>Minimum static gauge pressure is −0.2636 kPa for PVA and −2.702 kPa
+for the control, relative to the zero-gauge outlet. The prescribed 450
+kPa inlet total pressure sets the injection condition, while the
+static-pressure field describes pressure distribution within the
+mold.</p>
+<p>Comparison exports use seven equally distributed yz slices and the
+same camera. Each pair shares a linear color range: velocity 0–12 m/s,
+Ca 0–200 and Re 0–20. The viscosity export uses a logarithmic range of
+0.5–20 Pa·s, and the streamline export seeds 60 streamlines uniformly on
+inlet boundary 37.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Sample and coordinates (mm)</strong></th>
+<th><strong>PVA speed (m/s)</strong></th>
+<th><strong>Control speed (m/s)</strong></th>
+<th><strong>PVA Ca</strong></th>
+<th><strong>Control Ca</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A (0, −0.8, −2.2)</td>
+<td>8.446</td>
+<td>0.2483</td>
+<td>104</td>
+<td>99.33</td>
+</tr>
+<tr class="even">
+<td>B (0, −4.5, −2.2)</td>
+<td>0.5857</td>
+<td>0.009123</td>
+<td>7.981</td>
+<td>3.649</td>
+</tr>
+<tr class="odd">
+<td>C (0, −8.2, −10)</td>
+<td>0.00911</td>
+<td>0.0005205</td>
+<td>0.4268</td>
+<td>0.2082</td>
+</tr>
+<tr class="even">
+<td>D (0, −8.2, 5)</td>
+<td>0.02055</td>
+<td>0.001019</td>
+<td>0.7563</td>
+<td>0.4076</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table B1: Colocated velocity and capillary-number values at the
+common A–D probe positions.</p>
+<h2 id="b.5.-capillary-pressure-scale">B.5. Capillary-pressure
+scale</h2>
+<p>The capillary-pressure scale is P<sub>cap</sub> = 2σ|cosθ|/r, with
+Π<sub>p</sub> = |p2 − p<sub>ref</sub>|/P<sub>cap</sub>. For σ = 0.05
+N/m, θ = 60°, r = 0.5 mm and p<sub>ref</sub> = 0 Pa, P<sub>cap</sub> =
+100 Pa. Normalizing the nominal 450 kPa inlet total-pressure setting
+gives 4500; static pressures near 112.3 kPa at C and D give
+Π<sub>p</sub> ≈ 1123. Injection pressure therefore drives bulk delivery,
+while capillarity influences local penetration at a wetting interface.
+The sign of cosθ specifies whether capillary action assists or opposes
+invasion (COMSOL, n.d.-c, n.d.-f).</p>
+<p>Shear thinning increases flow capacity at a fixed pressure and
+enables lower-pressure operation for a given delivery requirement.
+Hydraulic power is ΔpQ, and pressure work per delivered volume is Δp.
+The 50-versus-450 kPa comparison gives an 88.9% reduction in the
+prescribed inlet setting. A subsequent energy assessment can combine
+measured pressure histories, throughput and pump efficiency under
+matched delivery conditions.</p>
+<h2 id="b.6.-derived-operating-comparisons">B.6. Derived operating
+comparisons</h2>
+<p>The low-pressure flow ratio is Q<sub>PVA,50</sub>/Q<sub>ref,450</sub>
+= 1.170018/0.424531 = 2.756, and the pressure-setting reduction is 100 ×
+(1 − 50/450) = 88.9%. At 50 kPa, PVA gives C and D speeds of 0.5020 and
+1.176 mm/s, compared with 0.5205 and 1.019 mm/s for the 450 kPa control.
+PVA therefore combines greater total delivery with comparable local
+cavity speeds at a substantially lower injection pressure.</p>
+<p>For the fluid-domain volume V = 0.673849 mL, the nominal
+volume-throughput time V/Q is 0.04847 s for PVA at 450 kPa, 0.5759 s for
+PVA at 50 kPa and 1.587 s for the 450 kPa control. This common-volume
+measure expresses the delivery advantage in time units.</p>
+<h2 id="b.7.-sensitivity-of-the-capillary-interpretation">B.7.
+Sensitivity of the capillary interpretation</h2>
+<p>Because Ca = μU/σ, its value varies inversely with the
+surface-tension input. At D, Ca = 1 corresponds to σ = 37.82 mN/m at 450
+kPa and 46.61 mN/m at 600 kPa, compared with the present 50 mN/m input.
+These values identify the sensitivity of the capillary balance to
+interface properties. Contact angle, curvature and air escape complement
+this balance in determining local filling behavior.</p>
+<h2 id="b.8.-fine-mesh-probe-study-and-outlet-geometry">B.8. Fine-mesh
+probe study and outlet geometry</h2>
+<p>The finer PVA probe model has verified extents of 17.204 × 13.543 ×
+25.32 mm, 450 kPa inlet total pressure, zero outlet static gauge
+pressure and the same Carreau parameters. Eleven interior sites sample
+feed F, neck A, cavity B–D, neck-to-cavity locations N<sub>1</sub> = (0,
+−0.5, −2.2) mm and N<sub>2</sub> = (0, −2.5, −2.2) mm, and four outlet
+branches, whose probes lie 0.6 mm upstream of the outlet faces. Each
+records speed, static pressure, apparent viscosity and shear rate, with
+boundary snapping and extrapolation disabled. The matched comparison in
+Section 5 is reported on its common mesh.</p>
+<table >
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Probe</strong></th>
+<th><strong>Position (x, y, z)<br />
+mm</strong></th>
+<th><strong>Speed<br />
+m/s</strong></th>
+<th><strong>Pressure<br />
+kPa</strong></th>
+<th><strong>Viscosity<br />
+Pa·s</strong></th>
+<th><strong>Shear rate<br />
+s⁻¹</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>(0, −0.8, −2.2)</td>
+<td>8.84</td>
+<td>117.3</td>
+<td>0.6719</td>
+<td>2722</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>(0, −4.5, −2.2)</td>
+<td>0.6897</td>
+<td>118.8</td>
+<td>0.6621</td>
+<td>3029</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td>(0, −8.2, −10)</td>
+<td>0.009684</td>
+<td>113.6</td>
+<td>2.053</td>
+<td>49.77</td>
+</tr>
+<tr class="even">
+<td>D</td>
+<td>(0, −8.2, 5)</td>
+<td>0.02249</td>
+<td>113.7</td>
+<td>1.734</td>
+<td>75.6</td>
+</tr>
+<tr class="odd">
+<td>B14</td>
+<td>(−4.533, −10.15, −6.766)</td>
+<td>6.436</td>
+<td>23.93</td>
+<td>0.6547</td>
+<td>3297</td>
+</tr>
+<tr class="even">
+<td>B16</td>
+<td>(−4.525, −10.15, 2.285)</td>
+<td>6.436</td>
+<td>23.74</td>
+<td>0.6391</td>
+<td>3998</td>
+</tr>
+<tr class="odd">
+<td>B55</td>
+<td>(4.518, −10.15, −6.766)</td>
+<td>6.444</td>
+<td>23.61</td>
+<td>0.6882</td>
+<td>2309</td>
+</tr>
+<tr class="even">
+<td>B57</td>
+<td>(4.525, −10.15, 2.285)</td>
+<td>6.474</td>
+<td>23.95</td>
+<td>0.6713</td>
+<td>2740</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table B2: PVA probe coordinates and values at t = 1 s on the fine
+mesh. Speed is the local magnitude and pressure is static gauge
+pressure; shear-rate magnitudes remain mesh sensitive.</p>
+<p>On the finer mesh, speed is 8.84 m/s at A and 0.009684 m/s at C, a
+912.8-fold contrast. N<sub>1</sub>/N<sub>2</sub> give 9.032/4.661 m/s
+and a 4.379 kPa static-pressure difference. B has shear rate 3029
+s<sup>−1</sup> and viscosity 0.6621 Pa·s; C has 49.77 s<sup>−1</sup> and
+2.053 Pa·s. C/D retain 113.6–113.7 kPa static gauge pressure. The joint
+fields locate shear-assisted neck supply and slower, more viscous cavity
+transport (COMSOL, n.d.-d).</p>
+<p>Inward flow is 14.7936 mL/s and outward flow is 14.8047 mL/s. Each
+outlet carries 24.99–25.02% of total outward flow (Image B2);
+branch-point speeds span 6.436–6.474 m/s, a 0.6002% range relative to
+their mean. The results combine substantial internal speed variation
+with balanced branch delivery. A–D probes characterize internal
+transport, while the outlet integrals quantify distribution among
+branches.</p>
+<p><img loading="lazy" src="fig-image19.png" 
+alt="Local point speeds at A to D on a logarithmic axis and integrated flow shares of the four outlets." /></p>
+<p class="cap">Image B2: Fine-mesh PVA model at 450 kPa and t = 1 s: (a) local
+speeds at A–D on a logarithmic axis; (b) fraction of the total outlet
+flow at each outlet.</p>
+<p>Both supplementary meshes use linear velocity interpolation and
+relative tolerance 0.001 (Table B3). Refinement changes inlet flow by
+6.135%, sampled speeds by up to 16.66% and shear rates by up to 131.2%;
+speed changes at C and D are 9.506% and 10.17%. The fine-mesh flux
+discrepancy is 0.07465%, supporting conservation. The inlet-area
+integral changes by 3.211%, so mesh representation also contributes to
+differences. Conservation and late-time stability support the transport
+interpretation, while local gradients require further refinement.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>PVA probe mesh</strong></th>
+<th><strong>Elements</strong></th>
+<th><strong>Flux mismatch %</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Coarse</td>
+<td>95815</td>
+<td>0.6793</td>
+</tr>
+<tr class="even">
+<td>Fine</td>
+<td>377218</td>
+<td>0.07465</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table B3: PVA probe-mesh checks. Flux discrepancy is 100 ×
+|Q<sub>out</sub> − Q<sub>in</sub>|/max(Q<sub>in</sub>, Q<sub>out</sub>),
+with both flows positive. Mesh differences quoted in the text use the
+fine-mesh magnitude as denominator.</p>
+<p>Outlet geometry was checked by integration on the matched mesh. Each
+outlet face (boundaries 14, 16, 55 and 57) integrates to 1.0798 ×
+10<sup>−6</sup> m<sup>2</sup>, an equivalent diameter of 1.17 mm, and
+the four together equal the 4.3193 × 10<sup>−6</sup> m<sup>2</sup> inlet
+face (2.35 mm). The branch probes place the outlet centres at x = ±4.52
+mm and z = −6.766 or 2.285 mm, the corners of a 9.051 mm square centred
+within 0.04 mm of the neck probes’ axis (x = 0, z = −2.2 mm).</p>
+<p>For the planned arrival tests, the arrival time t<sub>i</sub> of
+outlet i is the first time the liquid fraction averaged over its face
+exceeds 0.5 in the two-phase model, or the first video frame or sensor
+sample showing liquid at that outlet. The spread Δt = max t<sub>i</sub>
+− min t<sub>i</sub> is reported relative to the fill time
+t<sub>fill</sub>, with Δt/t<sub>fill</sub> &lt; 5% as the proposed
+criterion; frame rate and sampling are chosen so that this bound spans
+at least five samples. Short shots are stopped at 80, 90 and 95% of the
+0.674 mL cavity volume.</p>
+<h1 id="appendix-c.-planned-measurements-and-data-records">Appendix C.
+Planned measurements and data records</h1>
+<p>This appendix sets out the measurements planned for next semester and
+the records kept for the numerical work. The planned measurements link
+injection conditions to measured dimensions, defect occurrence and
+repeatability.</p>
+<p>The proposed casting allocation is two candidate pressure settings
+with three independent fills per setting for the fixed PVA formulation,
+compared against the current setting. Each fill is assessed for
+completeness, defects, dimensions and outlet arrival order.</p>
+<p>For planned casting comparisons, document batch age, temperature,
+geometry, outlet layout and freeze–thaw history; record mold-inlet
+pressure histories and casting order. Treat independently prepared fills
+as the replication unit. Define quality metrics and measurement
+procedures before comparing baseline and candidate settings.</p>
+<table >
+<colgroup>
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Evidence</strong></th>
+<th><strong>Record needed</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Material preparation</td>
+<td>Material grades and preparation records retained within the group;
+detailed composition, constituent ratios and batch quantities remain
+confidential</td>
+<td>Reproducible precursor preparation</td>
+</tr>
+<tr class="even">
+<td>Rheology</td>
+<td>Temperature- and age-controlled flow curves, fitted parameters and
+residuals, oscillatory response</td>
+<td>Document formulation-specific constitutive inputs</td>
+</tr>
+<tr class="odd">
+<td>Interfaces</td>
+<td>Material–air surface tension and advancing/receding contact angles
+on actual mold surfaces</td>
+<td>Characterize wetting and capillary behavior</td>
+</tr>
+<tr class="even">
+<td>Geometry and numerics</td>
+<td>Further spatial and temporal checks; calibrated bench pressure–flow
+data; measured rheology</td>
+<td>Quantify numerical and experimental agreement</td>
+</tr>
+<tr class="odd">
+<td>Casting</td>
+<td>Cavity pressure, flow rate, attempts and successes, scaled defect
+locations and sizes</td>
+<td>Test transport and part-quality hypotheses</td>
+</tr>
+<tr class="even">
+<td>Processed mechanics</td>
+<td>Mechanical characterization of the gelled formulation, held within
+the group.</td>
+<td>Quantify the material after gelation</td>
+</tr>
+<tr class="odd">
+<td>Outlet arrival</td>
+<td>Arrival time at each outlet from video or outlet-contact logs; frame
+rate or sampling rate; short-shot front positions at 80–95% fill</td>
+<td>Test simultaneous outlet filling</td>
+</tr>
+<tr class="even">
+<td>Silicone benchmark</td>
+<td>Silicone grade, mix ratio and degassing; same mold and pressure;
+completeness, defects and dimensions.</td>
+<td>Compare PVA and silicone castings from the same mold</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table C1: Records required for manufacturing validation and input
+traceability.</p>
+<p>The COMSOL models of the matched comparison, the twelve-case pressure
+series and the fine-mesh probe study are archived in the project folder,
+together with the mold CAD file, the rheology data and the pull-off
+records.</p>
+<h1 id="appendix-d.-physical-size-pva-pressure-series">Appendix D.
+Physical size PVA pressure series</h1>
+<h2 id="d.1.-global-domain-and-supply-response">D.1. Global domain and
+supply response</h2>
+<p>Twelve PVA cases were recomputed at the verified physical dimensions
+using 111,713 elements, relative tolerance 0.001 and t = 1 s. Tables D1
+and D2 report domain quantities and colocated C/D diagnostics. Inlet
+flow rises from 1.170 to 18.233 mL/s, a 15.58-fold increase; minimum
+viscosity decreases from 0.6737 to 0.5358 Pa·s. Flux discrepancies range
+from 0.2707% to 0.8859%. The series characterizes how pressure controls
+delivery through the mold.</p>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Inlet total pressure (kPa)</strong></th>
+<th><strong>Maximum speed (m/s)</strong></th>
+<th><strong>Mean speed (m/s)</strong></th>
+<th><strong>Minimum viscosity (Pa·s)</strong></th>
+<th><strong>Inward flow (mL/s)</strong></th>
+<th><strong>Flux discrepancy (%)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>50</td>
+<td>0.734</td>
+<td>0.05472</td>
+<td>0.6737</td>
+<td>1.17</td>
+<td>0.3916</td>
+</tr>
+<tr class="even">
+<td>100</td>
+<td>1.738</td>
+<td>0.1276</td>
+<td>0.6095</td>
+<td>2.731</td>
+<td>0.2707</td>
+</tr>
+<tr class="odd">
+<td>150</td>
+<td>2.809</td>
+<td>0.2038</td>
+<td>0.5844</td>
+<td>4.358</td>
+<td>0.2757</td>
+</tr>
+<tr class="even">
+<td>200</td>
+<td>3.923</td>
+<td>0.2809</td>
+<td>0.5704</td>
+<td>5.999</td>
+<td>0.3082</td>
+</tr>
+<tr class="odd">
+<td>250</td>
+<td>5.051</td>
+<td>0.3579</td>
+<td>0.5612</td>
+<td>7.633</td>
+<td>0.3566</td>
+</tr>
+<tr class="even">
+<td>300</td>
+<td>6.176</td>
+<td>0.4343</td>
+<td>0.5546</td>
+<td>9.246</td>
+<td>0.4167</td>
+</tr>
+<tr class="odd">
+<td>350</td>
+<td>7.285</td>
+<td>0.5098</td>
+<td>0.5497</td>
+<td>10.83</td>
+<td>0.4843</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td>8.373</td>
+<td>0.5843</td>
+<td>0.5457</td>
+<td>12.38</td>
+<td>0.5584</td>
+</tr>
+<tr class="odd">
+<td>450</td>
+<td>9.435</td>
+<td>0.6576</td>
+<td>0.5426</td>
+<td>13.9</td>
+<td>0.6365</td>
+</tr>
+<tr class="even">
+<td>500</td>
+<td>10.47</td>
+<td>0.7298</td>
+<td>0.5399</td>
+<td>15.38</td>
+<td>0.718</td>
+</tr>
+<tr class="odd">
+<td>550</td>
+<td>11.47</td>
+<td>0.8008</td>
+<td>0.5377</td>
+<td>16.83</td>
+<td>0.8014</td>
+</tr>
+<tr class="even">
+<td>600</td>
+<td>12.45</td>
+<td>0.8706</td>
+<td>0.5358</td>
+<td>18.23</td>
+<td>0.8859</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table D1: PVA pressure series at t = 1 s. Speed is in m/s and inward
+flow is in mL/s.</p>
+<h2 id="d.2.-cavity-transport-and-branch-balance">D.2. Cavity transport
+and branch balance</h2>
+<table>
+<colgroup>
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+<col  />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Pressure (kPa)</strong></th>
+<th><strong>U at C (mm/s)</strong></th>
+<th><strong>U at D (mm/s)</strong></th>
+<th><strong>Re at C</strong></th>
+<th><strong>Re at D</strong></th>
+<th><strong>Ca at C</strong></th>
+<th><strong>Ca at D</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>50</td>
+<td>0.502</td>
+<td>1.176</td>
+<td>5.71 × 10⁻⁵</td>
+<td>0.0001851</td>
+<td>0.09447</td>
+<td>0.1599</td>
+</tr>
+<tr class="even">
+<td>100</td>
+<td>1.282</td>
+<td>3.029</td>
+<td>0.0002349</td>
+<td>0.0007627</td>
+<td>0.1498</td>
+<td>0.2574</td>
+</tr>
+<tr class="odd">
+<td>150</td>
+<td>2.219</td>
+<td>5.2</td>
+<td>0.0005322</td>
+<td>0.001686</td>
+<td>0.1979</td>
+<td>0.3431</td>
+</tr>
+<tr class="even">
+<td>200</td>
+<td>3.256</td>
+<td>7.566</td>
+<td>0.0009377</td>
+<td>0.002904</td>
+<td>0.2419</td>
+<td>0.4219</td>
+</tr>
+<tr class="odd">
+<td>250</td>
+<td>4.362</td>
+<td>10.05</td>
+<td>0.001439</td>
+<td>0.004365</td>
+<td>0.283</td>
+<td>0.495</td>
+</tr>
+<tr class="even">
+<td>300</td>
+<td>5.516</td>
+<td>12.62</td>
+<td>0.002024</td>
+<td>0.00603</td>
+<td>0.3217</td>
+<td>0.5652</td>
+</tr>
+<tr class="odd">
+<td>350</td>
+<td>6.702</td>
+<td>15.23</td>
+<td>0.002681</td>
+<td>0.007864</td>
+<td>0.3585</td>
+<td>0.6312</td>
+</tr>
+<tr class="even">
+<td>400</td>
+<td>7.904</td>
+<td>17.87</td>
+<td>0.003398</td>
+<td>0.009839</td>
+<td>0.3935</td>
+<td>0.6943</td>
+</tr>
+<tr class="odd">
+<td>450</td>
+<td>9.11</td>
+<td>20.55</td>
+<td>0.004161</td>
+<td>0.01195</td>
+<td>0.4268</td>
+<td>0.7563</td>
+</tr>
+<tr class="even">
+<td>500</td>
+<td>10.31</td>
+<td>23.25</td>
+<td>0.004958</td>
+<td>0.01418</td>
+<td>0.4584</td>
+<td>0.816</td>
+</tr>
+<tr class="odd">
+<td>550</td>
+<td>11.48</td>
+<td>25.98</td>
+<td>0.005776</td>
+<td>0.01653</td>
+<td>0.4884</td>
+<td>0.8741</td>
+</tr>
+<tr class="even">
+<td>600</td>
+<td>12.63</td>
+<td>28.78</td>
+<td>0.006603</td>
+<td>0.01901</td>
+<td>0.5166</td>
+<td>0.9322</td>
+</tr>
+</tbody>
+</table>
+<p class="cap">Table D2: Local PVA diagnostics across pressure at t = 1 s. C/D
+coordinates are those in Table B1; Re uses L<sub>ref</sub> = 1 mm and Ca
+uses σ<sub>ref</sub> = 0.05 N/m. Values share the common mesh and are
+point samples.</p>
+<p>Across the pressure series, the 48 outlet-flow fractions
+Q<sub>j</sub>/ΣQ<sub>out</sub> range from 24.9696% to 25.0322%. The
+largest branch-to-branch range at any pressure is 0.05844 percentage
+points, at 50 kPa. This consistently balanced distribution supports
+supply to all four outlet regions over the tested pressure range.</p>
+<p>PVA inlet flow is 1.170, 4.358, 9.246 and 13.902 mL/s at 50, 150, 300
+and 450 kPa, respectively. From 450 to 600 kPa, flow increases by
+31.16%, pressure by 33.33% and minimum viscosity decreases by 1.25%.
+These trends guide pressure selection against throughput requirements
+and will be combined with casting measurements to refine the operating
+range.</p>
+<h1 id="references">References</h1>
+<p>Caglar, B., Tekin, C., Karasu, F., &amp; Michaud, V. (2019).
+Assessment of capillary phenomena in liquid composite molding.
+<em>Composites Part A: Applied Science and Manufacturing, 120</em>,
+73–83. <a
+href="https://doi.org/10.1016/j.compositesa.2019.02.018">https://doi.org/10.1016/j.compositesa.2019.02.018</a></p>
+<p>Celik, I. B., Ghia, U., Roache, P. J., Freitas, C. J., Coleman, H.,
+&amp; Raad, P. E. (2008). Procedure for estimation and reporting of
+uncertainty due to discretization in CFD applications. <em>Journal of
+Fluids Engineering, 130</em>(7), Article 078001. <a
+href="https://doi.org/10.1115/1.2960953">https://doi.org/10.1115/1.2960953</a></p>
+<p>Chan, T. S., Srivastava, S., Marchand, A., Andreotti, B., Biferale,
+L., Toschi, F., &amp; Snoeijer, J. H. (2013). Hydrodynamics of air
+entrainment by moving contact lines. <em>Physics of Fluids, 25</em>(7),
+Article 074105. <a
+href="https://doi.org/10.1063/1.4814466">https://doi.org/10.1063/1.4814466</a></p>
+<p>Chen, M. H., Wang, L. L., Chung, J. J., Kim, Y.-H., Atluri, P., &amp;
+Burdick, J. A. (2017). Methods to assess shear-thinning hydrogels for
+application as injectable biomaterials. <em>ACS Biomaterials Science
+&amp; Engineering, 3</em>(12), 3146–3160. <a
+href="https://doi.org/10.1021/acsbiomaterials.7b00734">https://doi.org/10.1021/acsbiomaterials.7b00734</a></p>
+<p>Cheng, Y., Chan, K. H., Wang, X.-Q., Ding, T., Li, T., Lu, X., &amp;
+Ho, G. W. (2019). Direct-ink-write 3D printing of hydrogels into
+biomimetic soft robots. <em>ACS Nano, 13</em>(11), 13176–13184. <a
+href="https://doi.org/10.1021/acsnano.9b06144">https://doi.org/10.1021/acsnano.9b06144</a></p>
+<p>COMSOL. (n.d.-a). <em>Fluid properties</em> [CFD Module
+documentation, version 6.3]. Retrieved October 27, 2026, from <a
+href="https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_single.06.027.html">https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_single.06.027.html</a></p>
+<p>COMSOL. (n.d.-b). <em>Microfluidics Module user’s guide</em> (Version
+6.3; glossary, capillary-number entry, pp. 408–409). Retrieved October
+27, 2026, from <a
+href="https://doc.comsol.com/6.3/doc/com.comsol.help.mfl/MicrofluidicsModuleUsersGuide.pdf">https://doc.comsol.com/6.3/doc/com.comsol.help.mfl/MicrofluidicsModuleUsersGuide.pdf</a></p>
+<p>COMSOL. (n.d.-c). <em>Multiphase flow</em> [Polymer Flow Module
+documentation, version 6.3]. Retrieved October 27, 2026, from <a
+href="https://doc.comsol.com/6.3/doc/com.comsol.help.polymer/polymer_ug_modeling.05.09.html">https://doc.comsol.com/6.3/doc/com.comsol.help.polymer/polymer_ug_modeling.05.09.html</a></p>
+<p>COMSOL. (n.d.-d). <em>Non-Newtonian flow</em> [CFD Module
+documentation, version 6.3]. Retrieved October 27, 2026, from <a
+href="https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_single.06.082.html">https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_single.06.082.html</a></p>
+<p>COMSOL. (n.d.-e). <em>The Reynolds number</em> [CFD Module
+documentation, version 6.3]. Retrieved October 27, 2026, from <a
+href="https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_single.06.081.html">https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_single.06.081.html</a></p>
+<p>COMSOL. (n.d.-f). <em>The Wetted Wall coupling feature</em> [CFD
+Module documentation, version 6.3]. Retrieved October 27, 2026, from <a
+href="https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_multi.09.011.html">https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_multi.09.011.html</a></p>
+<p>Holloway, J. L., Lowman, A. M., &amp; Palmese, G. R. (2013). The role
+of crystallization and phase separation in the formation of physically
+cross-linked PVA hydrogels. <em>Soft Matter, 9</em>(3), 826–833. <a
+href="https://doi.org/10.1039/C2SM26763B">https://doi.org/10.1039/C2SM26763B</a></p>
+<p>Kennedy, P., &amp; Zheng, R. (2013). <em>Flow analysis of injection
+molds</em> (2nd ed.). Hanser.</p>
+<p>Laschi, C. (2022). Embodied intelligence in soft robotics: Joys and
+sorrows. <em>IOP Conference Series: Materials Science and Engineering,
+1261</em>(1), Article 012002. <a
+href="https://doi.org/10.1088/1757-899X/1261/1/012002">https://doi.org/10.1088/1757-899X/1261/1/012002</a></p>
+<p>Marchese, A. D., Katzschmann, R. K., &amp; Rus, D. (2015). A recipe
+for soft fluidic elastomer robots. <em>Soft Robotics, 2</em>(1), 7–25.
+<a
+href="https://doi.org/10.1089/soro.2014.0022">https://doi.org/10.1089/soro.2014.0022</a></p>
+<p>Oberkampf, W. L., &amp; Trucano, T. G. (2002). Verification and
+validation in computational fluid dynamics. <em>Progress in Aerospace
+Sciences, 38</em>(3), 209–272. <a
+href="https://doi.org/10.1016/S0376-0421(02)00005-2">https://doi.org/10.1016/S0376-0421(02)00005-2</a></p>
+<p>Rus, D., &amp; Tolley, M. T. (2015). Design, fabrication and control
+of soft robots. <em>Nature, 521</em>(7553), 467–475. <a
+href="https://doi.org/10.1038/nature14543">https://doi.org/10.1038/nature14543</a></p>
+<p>Sun, J.-Y., Zhao, X., Illeperuma, W. R. K., Chaudhuri, O., Oh, K. H.,
+Mooney, D. J., Vlassak, J. J., &amp; Suo, Z. (2012). Highly stretchable
+and tough hydrogels. <em>Nature, 489</em>(7414), 133–136. <a
+href="https://doi.org/10.1038/nature11409">https://doi.org/10.1038/nature11409</a></p>
+<p>Tramacere, F., Beccai, L., Kuba, M., Gozzi, A., Bifone, A., &amp;
+Mazzolai, B. (2013). The morphology and adhesion mechanism of
+<em>Octopus vulgaris</em> suckers. <em>PLOS ONE, 8</em>(6), Article
+e65074. <a
+href="https://doi.org/10.1371/journal.pone.0065074">https://doi.org/10.1371/journal.pone.0065074</a></p>
+<p>Wallin, T. J., Pikul, J. H., &amp; Shepherd, R. F. (2018). 3D
+printing of soft robotic systems. <em>Nature Reviews Materials,
+3</em>(6), 84–100. <a
+href="https://doi.org/10.1038/s41578-018-0002-2">https://doi.org/10.1038/s41578-018-0002-2</a></p>
+<p>Washburn, E. W. (1921). The dynamics of capillary flow. <em>Physical
+Review, 17</em>(3), 273–283. <a
+href="https://doi.org/10.1103/PhysRev.17.273">https://doi.org/10.1103/PhysRev.17.273</a></p>
+<p>Yuk, H., Lin, S., Ma, C., Takaffoli, M., Fang, N. X., &amp; Zhao, X.
+(2017). Hydraulic hydrogel actuators and robots optically and sonically
+camouflaged in water. <em>Nature Communications, 8</em>, Article 14230.
+<a
+href="https://doi.org/10.1038/ncomms14230">https://doi.org/10.1038/ncomms14230</a></p>
+
+</article>
+<footer>© 2026 Qi Ji · National University of Singapore</footer>
+</main></body></html>

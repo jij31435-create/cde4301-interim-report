@@ -1,5 +1,3 @@
-# CDE4301 Interim Report - Qi Ji
-
-Flow Analysis for Injection Manufacturing of PVA Hydrogel Suckers.
-
-Website: https://jij31435-create.github.io/cde4301-interim-report/
+# Flow Analysis for Injection Manufacturing of PVA Hydrogel Suckers
+CDE4301 Innovation and Design Capstone — Interim Report, Qi Ji (A0276904W).
+Website: see the GitHub Pages link in this repository's About section.
